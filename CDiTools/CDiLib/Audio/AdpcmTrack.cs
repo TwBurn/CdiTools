@@ -7,8 +7,9 @@ using System.IO;
 
 namespace NMotion.Cdi.Audio {
 	public class AdpcmTrack {
-		public const int HEADER_SIZE = 54;
+		public const int HEADER_SIZE  = 54;
 		public const int BLOCK_GROUPS = 18;
+		public const int PADDING_SIZE = 20;
 
 		public byte[] Header { get; private set; }
 
@@ -44,7 +45,7 @@ namespace NMotion.Cdi.Audio {
 			/* Read Blocks */
 			byte[] buffer = new byte[track.BlockSize];
 			for (int b = 0; b < track.BlockCount; b++) {
-				stream.Read(buffer, 0, track.BlockCount);
+				stream.Read(buffer, 0, track.BlockSize);
 				for (int s = 0; s < BLOCK_GROUPS; s++) {
 					track.SoundGroups[b * BLOCK_GROUPS + s] = SoundGroup.FromByteArray(buffer, s * SoundGroup.SOUND_GROUP_SIZE);
 				}
@@ -69,6 +70,32 @@ namespace NMotion.Cdi.Audio {
 				value = (value << 8) + Header[startIndex + i];
 			}
 			return value;
+		}
+
+		public void MuteLeft() {
+			foreach (var sg in SoundGroups) sg.MuteLeft();
+		}
+
+		public void MuteRight() {
+			foreach (var sg in SoundGroups) sg.MuteRight();
+		}
+
+		public void ToStream(Stream stream, bool writeHeader = true, bool writeBlockPadding = true) {
+			if (writeHeader) {
+				stream.Write(Header, 0, HEADER_SIZE);
+			}
+
+			for (int b = 0; b < BlockCount; b++) {
+				for (int s = 0; s < BLOCK_GROUPS; s++) {
+					SoundGroups[b * BLOCK_GROUPS + s].ToStream(stream);
+				}
+
+				if (writeBlockPadding) {
+					for (int i = 0; i < PADDING_SIZE; i++) stream.WriteByte(0x00);
+				}
+			}
+
+			
 		}
 	}
 }

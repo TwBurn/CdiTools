@@ -44,6 +44,11 @@ namespace NMotion.Cdi.Audio {
 			return soundGroup;
 		}
 
+		public void ToStream(Stream stream) {
+			stream.Write(Parameters, 0, PARAMETER_COUNT);
+			stream.Write(Samples, 0, SAMPLE_COUNT);
+		}
+
 		public void MuteLeft() {
 			for (int i = 0; i < PARAMETER_COUNT; i += 2) {
 				Parameters[i + 0] = 0; /* Clear even bytes */

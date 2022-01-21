@@ -1,5 +1,6 @@
 ﻿using System;
 using CommandLine;
+using System.IO;
 using NMotion.Cdi.Audio;
 
 namespace NMotion.Cdi.Tools.AdpcmEdit {
@@ -19,18 +20,38 @@ namespace NMotion.Cdi.Tools.AdpcmEdit {
 			public bool Kill20 { get; private set; }
 
 			[Option('l', "left", HelpText = "Write Left channel only.")]
-			public bool MuteLeft { get; private set; }
+			public bool LeftOnly { get; private set; }
 
 			[Option('r', "right", HelpText = "Write Right channel only.")]
-			public bool MuteRight { get; private set; }
-			/*
-			[Option('m', "mode", Default = OutputMode.p, HelpText = "Output Mode:\n\tp = Binary Palette\n\ta = Plane A\n\tb = Plane B\n\tc = C Code\n\tj = JSON")]
-			public OutputMode Mode { get; private set; }
-			*/
+			public bool RightOnly { get; private set; }
 			
 		}
 		static void Main(string[] args) {
-			AdpcmTrack track = AdpcmTrack.FromFile(@"\\SESHADRI\c\Temp\GWC.ACM");
+			Parser.Default.ParseArguments<Options>(args)
+				.WithParsed(Execute);
+		}
+
+		static void Execute(Options options) {
+			if (!File.Exists(options.InputPath)) {
+				Console.WriteLine($"Error: Input file '{options.InputPath}' does not exist.");
+				return;
+			}
+
+			AdpcmTrack track = AdpcmTrack.FromFile(options.InputPath);
+
+			Console.WriteLine($"Number of blocks: {track.BlockCount}");
+
+			if (options.LeftOnly)  track.MuteRight();
+			if (options.RightOnly) track.MuteLeft();
+
+			try {
+				using var stream = File.OpenWrite(options.OutputPath);
+				track.ToStream(stream, writeHeader: options.Header, writeBlockPadding: !options.Kill20);
+			}
+			catch (Exception e) {
+				Console.WriteLine("Error: Cannot write output file: {0}", e.Message);
+				return;
+			}
 		}
 	}
 }
