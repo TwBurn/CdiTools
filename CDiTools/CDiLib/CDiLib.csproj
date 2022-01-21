@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+		<RootNamespace>NMotion.Cdi</RootNamespace>
+		<Company>nMotion</Company>
+		<Authors>Jeffrey Janssen</Authors>
+		<Product>CD-i Tools</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+  </ItemGroup>
+
+</Project>
