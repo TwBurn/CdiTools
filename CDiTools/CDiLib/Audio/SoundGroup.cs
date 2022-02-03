@@ -51,7 +51,7 @@ namespace NMotion.Cdi.Audio {
 
 		public void MuteLeft() {
 			for (int i = 0; i < PARAMETER_COUNT; i += 2) {
-				Parameters[i + 0] = 0; /* Clear even bytes */
+				Parameters[i + 0] = 0x00; /* Clear even bytes */
 			}
 			for (int i = 0; i < SAMPLE_COUNT; i++) {
 				Samples[i] &= 0xF0; /* Clear lower 4 bits */
@@ -60,7 +60,7 @@ namespace NMotion.Cdi.Audio {
 
 		public void MuteRight() {
 			for (int i = 0; i < PARAMETER_COUNT; i += 2) {
-				Parameters[i + 1] = 0; /* Clear odd bytes */
+				Parameters[i + 1] = 0x00; /* Clear odd bytes */
 			}
 			for (int i = 0; i < SAMPLE_COUNT; i++) {
 				Samples[i] &= 0x0F; /* Clear higher 4 bits */

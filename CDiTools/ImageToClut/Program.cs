@@ -15,10 +15,15 @@ namespace NMotion.Cdi.Tools.ImageToClut {
 
 			[Option('p', "palette", Required = true, HelpText = "Path of palette file to use.")]
 			public string PalettePath { get; private set; }
-			/*
-			[Option('m', "mode", Default = OutputMode.p, HelpText = "Output Mode:\n\tp = Binary Palette\n\ta = Plane A\n\tb = Plane B\n\tc = C Code\n\tj = JSON")]
-			public OutputMode Mode { get; private set; }
-			*/
+
+			[Option('a', "align", HelpText = "Fill output file to multiples of 2048 bytes.")]
+			public bool Align { get; private set; }
+
+
+		
+			[Option('f', "format", Default = ClutFormat.Clut7, HelpText = "Output Format: Clut4, Clut7, Clut8, Rle4, Rle7")]
+			public ClutFormat Format { get; private set; }
+
 
 		}
 		static void Main(string[] args) {
@@ -42,16 +47,18 @@ namespace NMotion.Cdi.Tools.ImageToClut {
 
 			using var paletteStream = File.OpenRead(options.PalettePath);
 			var palette = Palette.FromStream(paletteStream);	
-
-			if (palette.Colors.Length > 128) {
-				Console.WriteLine("Error: Input palette has too many colors");
-			}
-
 			var clutImage = ClutImage.FromRawImage(rawImage, palette);
+			clutImage.Validate(options.Format);
 
 			try {
 				using var stream = File.OpenWrite(options.OutputPath);
-				clutImage.ToStream(stream, ClutFormat.Clut7);
+				clutImage.ToStream(stream, options.Format);
+				if (options.Align) {
+					var lastBlockSize = (2048 - (stream.Length % 2048)) % 2048;
+					for (var i = 0; i < lastBlockSize; i++) {
+						stream.WriteByte(0);
+					}
+				}
 			}
 			catch (Exception e) {
 				Console.WriteLine("Error: Cannot write output file: {0}", e.Message);
