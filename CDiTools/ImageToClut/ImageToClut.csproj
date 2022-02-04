@@ -1,9 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>NMotion.Cdi.Tools</RootNamespace>
+    <Authors>Jeffrey Janssen</Authors>
+    <Company>nMotion</Company>
+    <Product>CD-i Tools</Product>
+    <StartupObject>NMotion.Cdi.Tools.ImageToClut.Program</StartupObject>
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

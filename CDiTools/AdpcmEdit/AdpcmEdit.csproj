@@ -4,6 +4,10 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>NMotion.Cdi.Tools</RootNamespace>
+    <Authors>Jeffrey Janssen</Authors>
+    <Company>nMotion</Company>
+    <Product>CD-i Tools</Product>
+    <StartupObject>NMotion.Cdi.Tools.AdpcmEdit.Program</StartupObject>
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

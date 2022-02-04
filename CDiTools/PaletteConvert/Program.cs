@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using NMotion.Cdi.Graphics;
-using System.IO;
 using CommandLine;
+using System.IO;
 
-namespace NMotion.Cdi.Tools.ImageToPalette {
+namespace NMotion.Cdi.Tools.PaletteConvert {
 	class Program {
 
 		public enum OutputMode {
@@ -16,7 +15,7 @@ namespace NMotion.Cdi.Tools.ImageToPalette {
 		}
 
 		public class Options {
-			[Value(0, MetaName = "InputPath", Required = true, HelpText = "Path of the image file to be processed.")]
+			[Value(0, MetaName = "InputPath", Required = true, HelpText = "Path of the input palette file to be processed.")]
 			public string InputPath { get; private set; }
 
 			[Value(1, MetaName = "OutputPath", Required = true, HelpText = "Path of the output file.")]
@@ -29,32 +28,22 @@ namespace NMotion.Cdi.Tools.ImageToPalette {
 			public OutputMode Mode { get; private set; }
 
 		}
-
 		static void Main(string[] args) {
-			//var ri = RawImage.FromImage(System.Drawing.Image.FromFile(@"C:\Temp\graphics\CDiGame\Colors.png"));
-			//var p = Palette.FromRawImage(ri);
 			Parser.Default.ParseArguments<Options>(args)
-				.WithParsed(Execute)
-				.WithNotParsed(HandleParseError);
-
-
+					.WithParsed(Execute);
 		}
 
 		static void Execute(Options options) {
 			if (!File.Exists(options.InputPath)) {
-				Console.WriteLine("Error: Input file '{0}' does not exist.", options.InputPath);
+				Console.WriteLine($"Error: Input file '{options.InputPath}' does not exist.");
 				return;
 			}
-
-			var mode = MapMode(options.Mode);
-			var image = RawImage.FromImage(System.Drawing.Image.FromFile(options.InputPath));
-			var palette = Palette.FromRawImage(image);
 			
+			var mode = MapMode(options.Mode);
+			using var paletteStream = File.OpenRead(options.InputPath);
+			var palette = Palette.FromStream(paletteStream);
 
-			if (palette.Colors.Length > 128) {
-				Console.WriteLine("Error: Input image has too many colors");
-			}
-			else if (palette.Colors.Length < 128 && options.FillPalette) {
+			if (palette.Colors.Length < 128 && options.FillPalette) {
 				var colors = new Color[128];
 				for (var i = 0; i < palette.Colors.Length; i++) {
 					colors[i] = palette.Colors[i];
@@ -84,10 +73,6 @@ namespace NMotion.Cdi.Tools.ImageToPalette {
 				OutputMode.j => PaletteFormat.Json,
 				_ => throw new Exception(string.Format("Invalid Mode: {0}", mode)),
 			};
-		}
-
-		static void HandleParseError(IEnumerable<Error> errs) {
-
 		}
 	}
 }

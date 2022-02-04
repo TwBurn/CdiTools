@@ -3,10 +3,10 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <StartupObject>NMotion.Cdi.Tools.ImageToPalette.Program</StartupObject>
     <RootNamespace>NMotion.Cdi.Tools</RootNamespace>
-    <Company>nMotion</Company>
+    <StartupObject>NMotion.Cdi.Tools.PaletteConvert.Program</StartupObject>
     <Authors>Jeffrey Janssen</Authors>
+    <Company>nMotion</Company>
     <Product>CD-i Tools</Product>
   </PropertyGroup>
 
@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
