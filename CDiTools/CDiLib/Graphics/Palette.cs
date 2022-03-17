@@ -33,6 +33,10 @@ namespace NMotion.Cdi.Graphics {
 
 			return new Palette(colorList.ToArray());
 		}
+		public static Palette FromFile(string inputPath) {
+			using var paletteStream = File.OpenRead(inputPath);
+			return FromStream(paletteStream);
+		}
 
 		public static Palette FromStream(Stream stream) {
 			var firstByte = stream.ReadByte();

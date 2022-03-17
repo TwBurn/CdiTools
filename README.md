@@ -7,6 +7,7 @@ This repository contains various tools that can be used in the development for C
 | Name  | Folder | Language | Description |
 |---|---|---|---|
 | CD-i Toolkit | `/CDiTools/` | .Net 5.0/C# | Various tools for Audio/Video conversion|
+| NobLDtk | `/NobLDtk/` | .Net 5.0/C# | Nobelia Level convertor|
 
 ## CD-i Toolkit
 
@@ -42,3 +43,6 @@ This tool performs various operations on an AIFF ADPCM audio file that has been 
 | `-k`, `--kill20` | false | Run Kill20 (Strip out CD block alignment bytes). |
 | `-l`, `--left` | false | Write Left channel only (Mutes Right channel). |
 | `-r` `--right` | false | Write Right channel only (Mutes Left channel). |
+
+## NobLDtk
+Level converter for Nobelia. Converts Nobelia LDTK world file to the Nobelia level format.

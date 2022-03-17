@@ -40,8 +40,8 @@ namespace NMotion.Cdi.Tools.PaletteConvert {
 			}
 			
 			var mode = MapMode(options.Mode);
-			using var paletteStream = File.OpenRead(options.InputPath);
-			var palette = Palette.FromStream(paletteStream);
+			
+			var palette = Palette.FromFile(options.InputPath);
 
 			if (palette.Colors.Length < 128 && options.FillPalette) {
 				var colors = new Color[128];

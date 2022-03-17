@@ -31,5 +31,32 @@ namespace NMotion.Cdi.Graphics {
 				}
 			}
 		}
+
+		public static RawImage FromClutImage(ClutImage image) {
+			var pixels = new Color[image.Width, image.Height];
+
+			for (int y = 0; y < image.Height; y++) {
+				for (int x = 0; x < image.Width; x++) {
+					pixels[x, y] = image.Palette.Colors[image.PixelData[x, y]];
+				}
+			}
+
+			return new RawImage() {
+				PixelData = pixels,
+				Width = image.Width,
+				Height = image.Height
+			};
+		}
+
+		public Bitmap ToBitmap() {
+			var bitmap = new Bitmap(Width, Height);
+			for (int y = 0; y < bitmap.Height; y++) {
+				for (int x = 0; x < bitmap.Width; x++) {
+					bitmap.SetPixel(x, y, PixelData[x, y].ToColor());
+				}
+			}
+
+			return bitmap;
+		}
 	}
 }

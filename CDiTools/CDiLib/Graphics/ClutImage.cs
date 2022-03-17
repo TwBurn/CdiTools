@@ -66,6 +66,40 @@ namespace NMotion.Cdi.Graphics {
 			return rleLine.ToArray();
 		}
 
+		public static ClutImage FromFile(string inputPath, int width, Palette palette, ClutFormat format, int skipBytes = 0) {
+			using var fs = File.OpenRead(inputPath);
+			fs.Seek(skipBytes, SeekOrigin.Begin);
+
+			int length = (int)fs.Length - skipBytes;
+			byte[] data = new byte[length];
+
+			fs.Read(data, 0, length);
+
+			int height = length / width;
+
+			byte[,] pixels = format switch {
+				ClutFormat.Clut7 => GetClut7PixelData(data, width, height),
+				_ => throw new NotImplementedException(),
+			};
+
+			return new ClutImage() {
+				PixelData = pixels,
+				Palette = palette,
+				Width = width,
+				Height = height
+			};
+		}
+
+		private static byte[,] GetClut7PixelData(byte[] data, int width, int height) {
+			byte[,] pixels = new byte[width, height];
+			for (var y = 0; y < height; y++) {
+				for (var x = 0; x <width; x++) {
+					pixels[x, y] = (byte)(data[width * y + x] & 0x7f);
+				}
+			}
+			return pixels;
+		}
+
 
 		public void ToStream(Stream stream, ClutFormat format) {
 			switch (format) {

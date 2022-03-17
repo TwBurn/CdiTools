@@ -44,6 +44,21 @@ namespace NMotion.Cdi.Audio {
 			return soundGroup;
 		}
 
+		public byte this[int index] {
+			get {
+				if (index < PARAMETER_COUNT) {
+					return Parameters[index];
+				}
+				else if (index < SOUND_GROUP_SIZE) {
+					return Samples[index - PARAMETER_COUNT];
+				}
+				else {
+					throw new ArgumentOutOfRangeException(nameof(index));
+				}
+			}
+		}
+
+
 		public void ToStream(Stream stream) {
 			stream.Write(Parameters, 0, PARAMETER_COUNT);
 			stream.Write(Samples, 0, SAMPLE_COUNT);

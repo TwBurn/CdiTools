@@ -68,6 +68,15 @@ namespace NMotion.Cdi.Graphics {
 			return string.Format("{{r:{0}, g:{1}, b:{2}}}", R, G, B);
 		}
 
+		public System.Drawing.Color ToColor() {
+			if (IsTransparent) {
+				return System.Drawing.Color.Transparent;
+			}
+			else {
+				return System.Drawing.Color.FromArgb(R, G, B);
+			}
+		}
+
 		private static readonly System.Text.RegularExpressions.Regex jsonRegex = new(@"\{\s*r\s*:\s*(\d+)\s*,\s*g\s*:\s*(\d+)\s*,\s*b\s*:\s*(\d+)\s*\}", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 		public static Color FromJson(string json) {
 			if (jsonRegex.IsMatch(json)) {
