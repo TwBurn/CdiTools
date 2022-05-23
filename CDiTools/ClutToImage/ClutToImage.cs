@@ -4,8 +4,8 @@ using CommandLine;
 using System.Collections.Generic;
 using NMotion.Cdi.Graphics;
 
-namespace NMotion.Cdi.Tools.ClutToImage {
-	class Program {
+namespace NMotion.Cdi.Tools {
+	class ClutToImage {
 		public class Options {
 			[Value(0, MetaName = "Input", Required = true, HelpText = "Path of the CLUT file to be processed.")]
 			public string InputPath { get; private set; }
@@ -19,9 +19,11 @@ namespace NMotion.Cdi.Tools.ClutToImage {
 			[Option('w', "width", Required = true, HelpText ="Image Width")]
 			public int Width { get; private set; }
 
+			[Option('h', "height", Required = false, HelpText = "Image Max. Height")]
+			public int Height { get; private set; } = -1;
+
 			[Option('s', "skip", Default = 0 , HelpText = "Number of bytes to skip.")]
 			public int SkipBytes { get; private set; }
-
 
 			[Option('f', "format", Default = ClutFormat.Clut7, HelpText = "Input Format: Clut4, Clut7, Clut8, Rle4, Rle7")]
 			public ClutFormat Format { get; private set; }
@@ -45,7 +47,7 @@ namespace NMotion.Cdi.Tools.ClutToImage {
 			}
 
 			var palette = Palette.FromFile(options.PalettePath);
-			var clutImage = ClutImage.FromFile(options.InputPath, options.Width, palette, options.Format, options.SkipBytes);
+			var clutImage = ClutImage.FromFile(options.InputPath, options.Width, palette, options.Format, options.SkipBytes, options.Height);
 			var rawImage = RawImage.FromClutImage(clutImage);
 			var bitmap = rawImage.ToBitmap();
 			bitmap.Save(options.OutputPath, System.Drawing.Imaging.ImageFormat.Png);

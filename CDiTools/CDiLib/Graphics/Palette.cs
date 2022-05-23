@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NMotion.Cdi.Graphics {
 
@@ -33,6 +35,18 @@ namespace NMotion.Cdi.Graphics {
 
 			return new Palette(colorList.ToArray());
 		}
+
+
+		public static Palette FromGrid(RawImage image, int gridSize) {
+			var colorList = new List<Color>();
+			for (var y = 0; y < image.Height; y += gridSize) {
+				for (var x = 0; x < image.Width; x += gridSize) {
+					colorList.Add(image.PixelData[x, y]);
+				}
+			}
+			return new Palette(colorList.ToArray());
+		}
+
 		public static Palette FromFile(string inputPath) {
 			using var paletteStream = File.OpenRead(inputPath);
 			return FromStream(paletteStream);
@@ -51,10 +65,7 @@ namespace NMotion.Cdi.Graphics {
 		private static Palette FromJsonStream(Stream stream) {
 			using StreamReader reader = new(stream);
 			var text = reader.ReadToEnd();
-			
-			var colorRegex = new System.Text.RegularExpressions.Regex(@"\{[^\}]+\}");
-			var colors = colorRegex.Matches(text).Select(m => Color.FromJson(m.Value)).ToArray();
-
+			var colors = JsonConvert.DeserializeObject<Color[]>(text);
 			return new Palette(colors);
 		}
 
@@ -70,13 +81,15 @@ namespace NMotion.Cdi.Graphics {
 			return new Palette(colors.ToArray());
 		}
 
+		
+
 		public int MatchColor(Color color) {
 			if (color.IsTransparent) return 0;
 
 			int minDelta = int.MaxValue;
-			int minIndex = 1;
+			int minIndex = 0;
 
-			for (var i = 1; i < Colors.Length; i++) {
+			for (var i = 0; i < Colors.Length; i++) {
 				var delta = color.ColorDistance(Colors[i]);
 				if (delta < minDelta) {
 					minDelta = delta;

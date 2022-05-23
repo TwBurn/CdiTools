@@ -66,7 +66,7 @@ namespace NMotion.Cdi.Graphics {
 			return rleLine.ToArray();
 		}
 
-		public static ClutImage FromFile(string inputPath, int width, Palette palette, ClutFormat format, int skipBytes = 0) {
+		public static ClutImage FromFile(string inputPath, int width, Palette palette, ClutFormat format, int skipBytes = 0, int maxHeight = 0) {
 			using var fs = File.OpenRead(inputPath);
 			fs.Seek(skipBytes, SeekOrigin.Begin);
 
@@ -75,10 +75,9 @@ namespace NMotion.Cdi.Graphics {
 
 			fs.Read(data, 0, length);
 
-			int height = length / width;
-
 			byte[,] pixels = format switch {
-				ClutFormat.Clut7 => GetClut7PixelData(data, width, height),
+				ClutFormat.Clut7 => GetClut7PixelData(data, width, maxHeight),
+				ClutFormat.Rle7  => GetRle7PixelData(data, width, maxHeight),
 				_ => throw new NotImplementedException(),
 			};
 
@@ -86,11 +85,14 @@ namespace NMotion.Cdi.Graphics {
 				PixelData = pixels,
 				Palette = palette,
 				Width = width,
-				Height = height
+				Height = pixels.GetLength(1)
 			};
 		}
 
-		private static byte[,] GetClut7PixelData(byte[] data, int width, int height) {
+		private static byte[,] GetClut7PixelData(byte[] data, int width, int maxHeight) {
+			int height = data.Length / width;
+			if (maxHeight > 0 && maxHeight < height) height = maxHeight;
+
 			byte[,] pixels = new byte[width, height];
 			for (var y = 0; y < height; y++) {
 				for (var x = 0; x <width; x++) {
@@ -98,6 +100,58 @@ namespace NMotion.Cdi.Graphics {
 				}
 			}
 			return pixels;
+		}
+
+		private static byte[,] GetRle7PixelData(byte[] data, int width, int maxHeight) {
+			List<byte[]> lines = GetRle7PixelLines(data, width, maxHeight);
+
+			int height = lines.Count;
+			byte[,] pixels = new byte[width, height];
+			for (var y = 0; y < height; y++) {
+				for (var x = 0; x < width; x++) {
+					pixels[x, y] = lines[y][x];
+				}
+			}
+			return pixels;
+		}
+
+		private static List<byte[]> GetRle7PixelLines(byte[] data, int width, int maxHeight) {
+			List<byte[]> lines = new();
+
+			int size = data.Length;
+			int index = 0; /* Data Index */
+			int lineNumber = 0; /* Lines Read */
+
+			while (index < data.Length) {
+				var x = 0;
+				var line = new byte[width];
+				while (x < width) {
+					if (size == index) return lines;
+					var color = data[index]; index++;
+
+					if (color >= 0x80) {
+						/* RLE - color in lower 7 bits */
+						if (size == index) return lines;
+						int count = data[index]; index++;
+
+						if (count == 0) count = width - x;
+
+						while (count > 0) {
+							line[x] = (byte)(color & 0x7f); x++;
+							count--;
+						}
+					}
+					else {
+						line[x] = color; x++;
+					}
+				}
+
+				lines.Add(line);
+				lineNumber++;
+
+				if (lineNumber == maxHeight) return lines;
+			}
+			return lines;
 		}
 
 

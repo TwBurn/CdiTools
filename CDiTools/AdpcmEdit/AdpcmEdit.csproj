@@ -7,7 +7,7 @@
     <Authors>Jeffrey Janssen</Authors>
     <Company>nMotion</Company>
     <Product>CD-i Tools</Product>
-    <StartupObject>NMotion.Cdi.Tools.AdpcmEdit.Program</StartupObject>
+    <StartupObject></StartupObject>
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

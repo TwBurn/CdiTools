@@ -4,8 +4,8 @@ using NMotion.Cdi.Graphics;
 using System.IO;
 using CommandLine;
 
-namespace NMotion.Cdi.Tools.ImageToPalette {
-	class Program {
+namespace NMotion.Cdi.Tools {
+	class ImageToPalette {
 
 		public enum OutputMode {
 			p,
@@ -24,6 +24,9 @@ namespace NMotion.Cdi.Tools.ImageToPalette {
 
 			[Option('f', "fill", Default = false, HelpText = "Fill palette to 128 colors.")]
 			public bool FillPalette { get; private set; }
+
+			[Option('g', "grid", HelpText = "Set grid size to create palette from.")]
+			public int GridSize { get; private set; } = -1;
 
 			[Option('m', "mode", Default = OutputMode.p, HelpText = "Output Mode:\n\tp = Binary Palette\n\ta = Plane A\n\tb = Plane B\n\tc = C Code\n\tj = JSON")]
 			public OutputMode Mode { get; private set; }
@@ -47,8 +50,15 @@ namespace NMotion.Cdi.Tools.ImageToPalette {
 			}
 
 			var mode = MapMode(options.Mode);
+
 			var image = RawImage.FromImage(System.Drawing.Image.FromFile(options.InputPath));
-			var palette = Palette.FromRawImage(image);
+			Palette palette;
+			if (options.GridSize > 0) {
+				palette = Palette.FromGrid(image, options.GridSize);
+			}
+			else {
+				palette = Palette.FromRawImage(image);
+			}
 			
 
 			if (palette.Colors.Length > 128) {
@@ -66,7 +76,7 @@ namespace NMotion.Cdi.Tools.ImageToPalette {
 			}
 
 			try {
-				using var stream = File.OpenWrite(options.OutputPath);
+				using var stream = File.Create(options.OutputPath);
 				palette.ToStream(stream, mode);
 			}
 			catch (Exception e) {

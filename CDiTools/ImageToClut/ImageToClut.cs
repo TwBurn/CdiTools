@@ -4,8 +4,8 @@ using CommandLine;
 using System.Collections.Generic;
 using NMotion.Cdi.Graphics;
 
-namespace NMotion.Cdi.Tools.ImageToClut {
-	class Program {
+namespace NMotion.Cdi.Tools {
+	class ImageToClut {
 		public class Options {
 			[Value(0, MetaName = "Input", Required = true, HelpText = "Path of the image file to be processed.")]
 			public string InputPath { get; private set; }
@@ -51,7 +51,7 @@ namespace NMotion.Cdi.Tools.ImageToClut {
 			clutImage.Validate(options.Format);
 
 			try {
-				using var stream = File.OpenWrite(options.OutputPath);
+				using var stream = File.Create(options.OutputPath);
 				clutImage.ToStream(stream, options.Format);
 				if (options.Align) {
 					var lastBlockSize = (2048 - (stream.Length % 2048)) % 2048;

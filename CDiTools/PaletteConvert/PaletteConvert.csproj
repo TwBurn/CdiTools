@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>NMotion.Cdi.Tools</RootNamespace>
-    <StartupObject>NMotion.Cdi.Tools.PaletteConvert.Program</StartupObject>
+    <StartupObject></StartupObject>
     <Authors>Jeffrey Janssen</Authors>
     <Company>nMotion</Company>
     <Product>CD-i Tools</Product>

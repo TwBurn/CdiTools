@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <StartupObject>NMotion.Cdi.Tools.ImageToPalette.Program</StartupObject>
+    <StartupObject></StartupObject>
     <RootNamespace>NMotion.Cdi.Tools</RootNamespace>
     <Company>nMotion</Company>
     <Authors>Jeffrey Janssen</Authors>

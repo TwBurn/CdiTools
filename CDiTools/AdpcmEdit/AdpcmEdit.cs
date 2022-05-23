@@ -3,8 +3,8 @@ using CommandLine;
 using System.IO;
 using NMotion.Cdi.Audio;
 
-namespace NMotion.Cdi.Tools.AdpcmEdit {
-	class Program {
+namespace NMotion.Cdi.Tools {
+	class AdpcmEdit {
 
 		public class Options {
 			[Value(0, MetaName = "Input", Required = true, HelpText = "Path of the ADPCM audio (ACM) file to be processed.")]
@@ -38,7 +38,7 @@ namespace NMotion.Cdi.Tools.AdpcmEdit {
 			}
 
 			AdpcmTrack track = AdpcmTrack.FromFile(options.InputPath);
-
+			/*
 			using var os = File.OpenWrite(@"c:\temp\audio\test.pcm");
 			byte[] header = { 0x46, 0x4F, 0x52, 0x4D, 0x00, 0x98, 0x11, 0xC2, 0x41, 0x49, 0x46, 0x46, 0x43, 0x4F, 0x4D, 0x4D, 0x00, 0x00, 0x00, 0x12, 0x00, 0x02, 0x00, 0x26, 0x04, 0x65, 0x00, 0x10, 0x40, 0x0D, 0x93, 0xA8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x53, 0x53, 0x4E, 0x44, 0x00, 0x98, 0x11, 0x9C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x09, 0x14 };
 			os.Write(header, 0, header.Length);
@@ -51,7 +51,7 @@ namespace NMotion.Cdi.Tools.AdpcmEdit {
 				}
 			}
 			os.Close();
-
+			*/
 			Console.WriteLine($"Number of blocks: {track.BlockCount}");
 
 			if (options.LeftOnly)  track.MuteRight();
